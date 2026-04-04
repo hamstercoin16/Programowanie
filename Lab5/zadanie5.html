@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<head>
+    <meta charset="utf-8">
+    <title>Zadanie5</title>
+</head>
+<body>
+    <script>
+        function choinke(n) {
+            for (let i = 1; i <= n; i++) {
+                let spaces = ' '.repeat(n - i);
+                let stars = '*'.repeat(2 * i - 1);
+                console.log(spaces + stars);
+            }
+        }
+        choinke(5);
+
+    </script>
+</body>

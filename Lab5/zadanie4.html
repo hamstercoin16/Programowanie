@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<head>
+    <meta charset="utf-8">
+    <title>Zadanie4</title>
+</head>
+<body>
+    <script>
+        function wartosc_ciagu(n) {
+            let suma = 0;
+
+            for (let i = 0; i < n; i++) {
+                let mianownik = 2 * i + 1;
+
+                if (i % 2 === 0) {
+                    suma += 1 / mianownik;
+                } else {
+                    suma -= 1 / mianownik;
+                }
+            }
+
+            return 4 * suma;
+        }
+        console.log(wartosc_ciagu(100))
+    </script>
+</body>
