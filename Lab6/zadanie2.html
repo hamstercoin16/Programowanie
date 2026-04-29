@@ -1,0 +1,114 @@
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <style>
+        #reset {
+            display: inline-block;
+        }
+
+        #stop {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <h1 id="czas">
+        <span id="godziny">00</span>:<span id="minuty">00</span>:<span id="sekundy">00</span>
+    </h1>
+    <button id="start">START</button>
+    <button id="zapisz">ZAPISZ</button>
+    <button id="stop">STOP</button>
+    <button id="reset">RESET</button>
+    <p id="stan_stopera"></p>
+    <ul id="zapisane_czasy">
+    </ul>
+
+    <script>
+        const start = document.getElementById('start')
+        const zapisz = document.getElementById('zapisz')
+        const stop = document.getElementById('stop')
+        const reset = document.getElementById('reset')
+        const godzinyElement = document.getElementById('godziny');
+        const minutyElement = document.getElementById('minuty');
+        const sekundyElement = document.getElementById('sekundy');
+        const stanStopera = document.getElementById('stan_stopera');
+        const zapisaneCzasy = document.getElementById('zapisane_czasy');
+
+        let czasWsekundach = 0;
+        let intervalId;
+        let licznikZapisow = 1;
+
+        // Funkcja pomocnicza do dodawania wiodących zer
+        function formatujCzas(sekundyCalkowite) {
+            let h = Math.floor(sekundyCalkowite / 3600);
+            let m = Math.floor((sekundyCalkowite % 3600) / 60);
+            let s = sekundyCalkowite % 60;
+
+            h = h < 10 ? "0" + h : h;
+            m = m < 10 ? "0" + m : m;
+            s = s < 10 ? "0" + s : s;
+
+            return { h, m, s };
+        }
+
+        // Aktualizacja HTML o bieżący czas
+        function aktualizujWyswietlacz() {
+            const czas = formatujCzas(czasWsekundach);
+            godzinyElement.innerText = czas.h;
+            minutyElement.innerText = czas.m;
+            sekundyElement.innerText = czas.s;
+        }
+
+        // Obsługa przycisku START
+        start.addEventListener('click', () => {
+            intervalId = setInterval(() => {
+                czasWsekundach++;
+                aktualizujWyswietlacz();
+            }, 1000);
+
+            start.style.display = 'none';
+            reset.style.display = 'none';
+            stop.style.display = 'inline-block';
+            stanStopera.innerText = 'Odliczanie...';
+        });
+
+        // Obsługa przycisku STOP
+        stop.addEventListener('click', () => {
+            clearInterval(intervalId);
+
+            start.style.display = 'inline-block';
+            reset.style.display = 'inline-block';
+            stop.style.display = 'none';
+            stanStopera.innerText = 'Wstrzymano';
+        });
+
+        // Obsługa przycisku ZAPISZ
+        zapisz.addEventListener('click', () => {
+            const czas = formatujCzas(czasWsekundach);
+            const nowyZapis = document.createElement('li');
+            nowyZapis.innerText = `${licznikZapisow}. ${czas.h}:${czas.m}:${czas.s}`;
+            zapisaneCzasy.appendChild(nowyZapis);
+            licznikZapisow++;
+        });
+
+        // Obsługa przycisku RESET
+        reset.addEventListener('click', () => {
+            clearInterval(intervalId);
+            czasWsekundach = 0;
+            licznikZapisow = 1;
+            
+            aktualizujWyswietlacz();
+            zapisaneCzasy.innerHTML = '';
+            stanStopera.innerText = '';
+
+            start.style.display = 'inline-block';
+            reset.style.display = 'inline-block';
+            stop.style.display = 'none';
+        });
+    </script>
+    </script>
+</body>
+
+</html>

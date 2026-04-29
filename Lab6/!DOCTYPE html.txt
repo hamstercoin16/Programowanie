@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<title>Stoper</title>
+<style>
+    #controls button { margin: 5px; }
+</style>
+</head>
+<body>
+    <h1>Stoper</h1>
+
+    <div id="timer">00:00:00</div>
+    <p id="status">Stoper jest wyzerowany.</p>
+
+    <div id="controls">
+        <button id="startBtn">Start</button>
+        <button id="stopBtn" style="display:none;">Stop</button>
+        <button id="saveBtn">Zapisz</button>
+        <button id="resetBtn" style="display:none;">Reset</button>
+    </div>
+
+    <h3>Zapisane czasy:</h3>
+    <ul id="savedTimes"></ul>
+
+    <script>
+        let hours = 0, minutes = 0, seconds = 0;
+        let stopwatch; // ID setInterval
+        let running = false;
+
+        const timerDiv = document.getElementById('timer');
+        const status = document.getElementById('status');
+        const startBtn = document.getElementById('startBtn');
+        const stopBtn = document.getElementById('stopBtn');
+        const saveBtn = document.getElementById('saveBtn');
+        const resetBtn = document.getElementById('resetBtn');
+        const savedTimes = document.getElementById('savedTimes');
+
+        function formatTime(h, m, s) {
+            const pad = num => num.toString().padStart(2, '0');
+            return `${pad(h)}:${pad(m)}:${pad(s)}`;
+        }
+
+        function updateTimer() {
+            seconds++;
+            if (seconds >= 60) { seconds = 0; minutes++; }
+            if (minutes >= 60) { minutes = 0; hours++; }
+            timerDiv.textContent = formatTime(hours, minutes, seconds);
+        }
+
+        startBtn.addEventListener('click', () => {
+            if (!running) {
+                stopwatch = setInterval(updateTimer, 1000);
+                running = true;
+                status.textContent = "Trwa odliczanie...";
+                startBtn.style.display = 'none';
+                stopBtn.style.display = 'inline';
+                resetBtn.style.display = 'none';
+            }
+        });
+
+        stopBtn.addEventListener('click', () => {
+            clearInterval(stopwatch);
+            running = false;
+            status.textContent = "Odliczanie wstrzymane.";
+            startBtn.style.display = 'inline';
+            stopBtn.style.display = 'none';
+            resetBtn.style.display = 'inline';
+        });
+
+        saveBtn.addEventListener('click', () => {
+            const li = document.createElement('li');
+            li.textContent = formatTime(hours, minutes, seconds);
+            savedTimes.appendChild(li);
+        });
+
+        resetBtn.addEventListener('click', () => {
+            clearInterval(stopwatch);
+            running = false;
+            hours = minutes = seconds = 0;
+            timerDiv.textContent = "00:00:00";
+            savedTimes.innerHTML = '';
+            status.textContent = "Stoper wyzerowany.";
+            startBtn.style.display = 'inline';
+            stopBtn.style.display = 'none';
+            resetBtn.style.display = 'none';
+        });
+    </script>
+</body>
+</html>

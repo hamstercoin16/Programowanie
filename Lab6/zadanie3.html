@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <title>Zadanie 3 - API</title>
+</head>
+<body>
+
+    <h1>Aktualna godzina w Polsce:</h1>
+    <div id="time-container">Ładowanie...</div>
+
+    <script>
+        async function fetchTime() {
+            const url = 'https://timeapi.io/api/Time/current/zone?timeZone=Europe/Warsaw';
+            
+            try {
+                // 1. Wysyłamy zapytanie do API
+                const response = await fetch(url);
+                
+                // 2. Sprawdzamy czy odpowiedź jest poprawna
+                if (!response.ok) throw new Error('Błąd pobierania danych');
+                
+                // 3. Parsujemy odpowiedź do formatu JSON
+                const data = await response.json();
+                
+                // 4. Wyświetlamy godzinę na stronie
+                document.getElementById('time-container').innerText = data.time;
+            } catch (error) {
+                document.getElementById('time-container').innerText = 'Wystąpił błąd: ' + error.message;
+            }
+        }
+
+        // Wywołujemy funkcję
+        fetchTime();
+    </script>
+</body>
+</html>
