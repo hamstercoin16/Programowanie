@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <title>Dzielenie liczb</title>
+</head>
+<body>
+
+<h2>Dzielenie dwóch liczb</h2>
+
+<label>Pierwsza liczba:</label><br>
+<input type="text" id="num1"><br><br>
+
+<label>Druga liczba:</label><br>
+<input type="text" id="num2"><br><br>
+
+<button onclick="divide()">Podziel</button>
+
+<div class="result" id="output"></div>
+
+<script>
+    function divide() {
+        const output = document.getElementById("output");
+        output.textContent = "";
+
+        try {
+            const val1 = document.getElementById("num1").value;
+            const val2 = document.getElementById("num2").value;
+
+            // sprawdzenie czy coś wpisano
+            if (val1.trim() === "" || val2.trim() === "") {
+                throw new Error("Wprowadź obie liczby.");
+            }
+
+            const num1 = parseFloat(val1);
+            const num2 = parseFloat(val2);
+
+            if (isNaN(num1) || isNaN(num2)) {
+                throw new Error("Podaj poprawne liczby.");
+            }
+
+            if (num2 === 0) {
+                throw new Error("Nie można dzielić przez zero.");
+            }
+
+            const result = num1 / num2;
+
+            output.textContent = "Wynik: " + result;
+
+        } catch (error) {
+            output.textContent = error.message;
+            output.classList.add("error");
+        }
+    }
+</script>
+
+</body>
+</html>

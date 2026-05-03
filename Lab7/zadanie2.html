@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <title>Rejestracja</title>
+    <style>
+        .error {
+            color: red;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+
+<form onsubmit="return checkForms()">
+
+    <label>Login:</label><br>
+    <input type="text" id="login" name="login"><br>
+    <div class="error" id="loginError"></div>
+
+    <label>Email:</label><br>
+    <input type="email" id="email" name="email"><br>
+    <div class="error" id="emailError"></div>
+
+    <label>Password:</label><br>
+    <input type="password" id="password" name="password"><br>
+
+    <label>Retype password:</label><br>
+    <input type="password" id="retype" name="retype"><br>
+    <div class="error" id="passwordError"></div>
+
+    <label>Data urodzenia:</label><br>
+    <input type="date" id="birthdate" name="birthdate"><br>
+    <div class="error" id="birthError"></div>
+
+    <label>Gender:</label><br>
+    <select id="gender" name="gender">
+        <option value="">-- wybierz --</option>
+        <option value="male">Mężczyzna</option>
+        <option value="female">Kobieta</option>
+        <option value="other">Nie chcę podawać</option>
+    </select><br>
+    <div class="error" id="genderError"></div>
+
+    <br>
+
+    <label>Plan:</label><br>
+    <label><input type="radio" name="plan" value="free"> Darmowa</label>
+    <label><input type="radio" name="plan" value="standard"> Standardowa</label>
+    <label><input type="radio" name="plan" value="premium"> Premium</label><br>
+    <div class="error" id="planError"></div>
+
+    <br>
+
+    <label>
+        <input type="checkbox" id="terms" name="terms"> Akceptuję regulamin
+    </label>
+    <div class="error" id="termsError"></div>
+
+    <br><br>
+
+    <button type="submit">Zarejestruj się</button>
+
+</form>
+
+<script>
+    function checkForms() {
+
+
+        document.querySelectorAll(".error").forEach(e => e.textContent = "");
+
+        const login = document.getElementById('login').value.trim();
+        const email = document.getElementById('email').value.trim();
+        const password = document.getElementById('password').value;
+        const retype = document.getElementById('retype').value;
+        const birthdate = document.getElementById('birthdate').value;
+        const gender = document.getElementById('gender').value;
+        const planSelected = Array.from(document.getElementsByName('plan')).some(r => r.checked);
+        const terms = document.getElementById('terms').checked;
+
+        let isValid = true;
+
+        const hasDigit = /[0-9]/.test(login);
+        const hasLetter = /[a-zA-Z]/.test(login);
+
+        if (!login || !hasDigit || !hasLetter) {
+            document.getElementById("loginError").textContent =
+                "Login musi zawierać litery i cyfry.";
+            isValid = false;
+        }
+
+        const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!email || !regex.test(email)) {
+            document.getElementById("emailError").textContent =
+                "Niepoprawny email.";
+            isValid = false;
+        }
+
+        if (password.length < 8) {
+            document.getElementById("passwordError").textContent =
+                "Hasło musi mieć минимум 8 znaków.";
+            isValid = false;
+        }
+
+        if (password !== retype) {
+            document.getElementById("passwordError").textContent =
+                "Hasła nie pasują.";
+            isValid = false;
+        }
+
+        if (!birthdate) {
+            document.getElementById("birthError").textContent =
+                "Podaj datę urodzenia.";
+            isValid = false;
+        } else {
+            const birth = new Date(birthdate);
+            const today = new Date();
+            let age = today.getFullYear() - birth.getFullYear();
+
+            if (age < 18) {
+                document.getElementById("birthError").textContent =
+                    "Musisz mieć co najmniej 18 lat.";
+                isValid = false;
+            }
+        }
+
+        if (!gender) {
+            document.getElementById("genderError").textContent =
+                "Wybierz płeć.";
+            isValid = false;
+        }
+
+        if (!planSelected) {
+            document.getElementById("planError").textContent =
+                "Wybierz plan.";
+            isValid = false;
+        }
+
+        if (!terms) {
+            document.getElementById("termsError").textContent =
+                "Musisz zaakceptować regulamin.";
+            isValid = false;
+        }
+
+        if (isValid) {
+            alert("Formularz wysłany poprawnie!");
+        }
+
+        return isValid;
+    }
+</script>
+
+</body>
+</html>
