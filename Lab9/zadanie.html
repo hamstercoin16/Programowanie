@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clicker</title>
+</head>
+<body>
+
+<div>
+    <h1>Clicker</h1>
+    <div><strong><span id="points">0</span> punktów</strong></div>
+
+    <br>
+    <div>Moc kliknięcia: <span id="click-power">1</span></div>
+    <div>Pasywny dochód: <span id="passive-income">0</span> / sek</div>
+    <br>
+
+    <button id="main-click-btn" style="padding: 20px; font-size: 18px;">Kliknij!</button>
+    <br><br>
+    <hr>
+
+    <div>
+        <h3>Ulepszenia</h3>
+        <button id="upgrade-click-btn">
+            +1 do mocy kliknięcia (Koszt: <span id="upgrade-click-cost">10</span>)
+        </button>
+        <br><br>
+        <button id="upgrade-passive-btn">
+            +1 auto-klik/sek (Koszt: <span id="upgrade-passive-cost">50</span>)
+        </button>
+    </div>
+</div>
+
+<script>
+    let gameState = {
+        points: 0,
+        clickPower: 1,
+        clickPowerCost: 10,
+        passiveIncome: 0,
+        passiveIncomeCost: 50,
+        lastOnline: Date.now()
+    };
+
+    const pointsEl = document.getElementById('points');
+    const clickPowerEl = document.getElementById('click-power');
+    const passiveIncomeEl = document.getElementById('passive-income');
+    const mainClickBtn = document.getElementById('main-click-btn');
+
+    const upgradeClickBtn = document.getElementById('upgrade-click-btn');
+    const upgradeClickCostEl = document.getElementById('upgrade-click-cost');
+
+    const upgradePassiveBtn = document.getElementById('upgrade-passive-btn');
+    const upgradePassiveCostEl = document.getElementById('upgrade-passive-cost');
+
+    function updateUI() {
+        pointsEl.textContent = Math.floor(gameState.points);
+        clickPowerEl.textContent = gameState.clickPower;
+        passiveIncomeEl.textContent = gameState.passiveIncome;
+
+        upgradeClickCostEl.textContent = gameState.clickPowerCost;
+        upgradePassiveCostEl.textContent = gameState.passiveIncomeCost;
+
+        upgradeClickBtn.disabled = gameState.points < gameState.clickPowerCost;
+        upgradePassiveBtn.disabled = gameState.points < gameState.passiveIncomeCost;
+    }
+
+    function saveGame() {
+        gameState.lastOnline = Date.now();
+        localStorage.setItem('clickerSave', JSON.stringify(gameState));
+    }
+
+    function loadGame() {
+        const savedData = localStorage.getItem('clickerSave');
+        if (savedData) {
+            const parsedData = JSON.parse(savedData);
+            gameState = { ...gameState, ...parsedData };
+
+            const now = Date.now();
+            const secondsOffline = Math.floor((now - gameState.lastOnline) / 1000);
+
+            if (secondsOffline > 0 && gameState.passiveIncome > 0) {
+                const offlinePoints = secondsOffline * gameState.passiveIncome;
+                gameState.points += offlinePoints;
+                setTimeout(() => {
+                    alert(`Witaj ponownie! Podczas Twojej nieobecności (${secondsOffline} sek.) pasywny dochód przyniósł Ci ${offlinePoints} punktów.`);
+                }, 500);
+            }
+            gameState.lastOnline = now;
+        }
+    }
+
+    mainClickBtn.addEventListener('click', () => {
+        gameState.points += gameState.clickPower;
+        updateUI();
+        saveGame();
+    });
+
+    upgradeClickBtn.addEventListener('click', () => {
+        if (gameState.points >= gameState.clickPowerCost) {
+            gameState.points -= gameState.clickPowerCost;
+            gameState.clickPower += 1;
+            gameState.clickPowerCost = Math.ceil(gameState.clickPowerCost * 1.5);
+            updateUI();
+            saveGame();
+        }
+    });
+
+    upgradePassiveBtn.addEventListener('click', () => {
+        if (gameState.points >= gameState.passiveIncomeCost) {
+            gameState.points -= gameState.passiveIncomeCost;
+            gameState.passiveIncome += 1;
+            gameState.passiveIncomeCost = Math.ceil(gameState.passiveIncomeCost * 1.5);
+            updateUI();
+            saveGame();
+        }
+    });
+
+    setInterval(() => {
+        if (gameState.passiveIncome > 0) {
+            gameState.points += gameState.passiveIncome;
+            updateUI();
+            saveGame();
+        }
+    }, 1000);
+
+    loadGame();
+    updateUI();
+</script>
+
+</body>
+</html>
